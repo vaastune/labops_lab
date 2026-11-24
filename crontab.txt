@@ -1,0 +1,8 @@
+# minute hour day-of-month month day-of-week command
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/16/bin
+# every minute: heartbeat (proves cron and the database are both alive)
+* * * * * bash /work/scripts/heartbeat.sh >> /work/logs/cron.log 2>&1
+# every 2 minutes: backup (flock -n = skip this run if the previous one is still running)
+*/2 * * * * flock -n /tmp/backup.lock bash /work/scripts/backup.sh >> /work/logs/cron.log 2>&1
+# every 5 minutes: health check
+*/5 * * * * bash /work/scripts/db-check.sh >> /work/logs/cron.log 2>&1
